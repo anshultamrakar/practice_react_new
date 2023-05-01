@@ -10,6 +10,10 @@ const FoodProvider = ({children}) => {
     const [foods , setFoods ] = useState([])
     const [isLoading , setIsLoading] = useState(true)
     const [cartItems , setCartItems] = useState([])
+    const [isVeg , setIsVeg] = useState(false)
+    const [isSpicy , setIsSpicy] = useState(false)
+    const [search, setSearch] = useState("")
+    const [searchResult , setSearchResult] = useState([])
 
 
     const getMenuData = async() => {
@@ -29,15 +33,26 @@ const FoodProvider = ({children}) => {
     },[])
 
 
+    useEffect(() => {
+     const filterResult = foods.filter(food => food.name.toLowerCase().includes(search.toLowerCase()))
+     setSearchResult(filterResult)
+    }, [foods , search])
+
+
     const handleCart = (food) => {
-        const cartList = [...cartItems , food]
-        setCartItems(cartList)
+       if(cartItems.some(cart => cart.id === food.id)){
+        setCartItems(cartItems.filter(cart => cart.id !== food.id))
+       }else{
+        setCartItems([...cartItems , food])
+       }
     }
 
 
 
     return(
-        <FoodContext.Provider value = {{foods , isLoading , handleCart , cartItems }}>
+        <FoodContext.Provider value = {{foods , isLoading , handleCart , cartItems 
+            , isVeg , setIsVeg , isSpicy , setIsSpicy  , search , setSearch
+        }}>
           {children}
         </FoodContext.Provider>
     )
